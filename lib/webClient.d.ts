@@ -1,4 +1,5 @@
 /// <reference types="node" />
+export declare function debug(message: any): void;
 export declare class WebRequest {
     method: string;
     uri: string;

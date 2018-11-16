@@ -2,6 +2,7 @@ import fs = require('fs');
 import util = require('util');
 import webClient = require('./webClient');
 import Q = require('q');
+const debug = webClient.debug;
 
 export const KUDU_DEPLOYMENT_CONSTANTS = {
     SUCCESS: 4,
@@ -60,7 +61,7 @@ export class KuduServiceManagementClient {
                 }
 
                 if(retryCount > 0 && exceptionString.indexOf('Request timeout') != -1 && (!reqOptions || reqOptions.retryRequestTimedout)) {
-                    console.debug('encountered request timedout issue in Kudu. Retrying again');
+                    debug('encountered request timedout issue in Kudu. Retrying again');
                     retryCount -= 1;
                     continue;
                 }
@@ -103,7 +104,7 @@ export class Kudu {
         try {
             let webRequestOptions: webClient.WebRequestOptions = {retriableErrorCodes: [], retriableStatusCodes: [], retryCount: 1, retryIntervalInSeconds: 5, retryRequestTimedout: true};
             var response = await this._client.beginRequest(httpRequest, webRequestOptions);
-            console.debug(`updateDeployment. Data: ${JSON.stringify(response)}`);
+            debug(`updateDeployment. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 console.log("Successfullyupdateddeploymenthistory " + response.body.url);
                 return response.body.id;
@@ -123,7 +124,7 @@ export class Kudu {
         httpRequest.uri = this._client.getRequestUri(`/api/continuouswebjobs`);
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getContinuousJobs. Data: ${JSON.stringify(response)}`);
+            debug(`getContinuousJobs. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body as Array<WebJob>;
             }
@@ -143,7 +144,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`startContinuousWebJob. Data: ${JSON.stringify(response)}`);
+            debug(`startContinuousWebJob. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 console.log(('StartedWebJob' + jobName));
                 return response.body as WebJob;
@@ -164,7 +165,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`stopContinuousWebJob. Data: ${JSON.stringify(response)}`);
+            debug(`stopContinuousWebJob. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 console.log(('StoppedWebJob' + jobName));
                 return response.body as WebJob;
@@ -184,7 +185,7 @@ export class Kudu {
         httpRequest.uri = this._client.getRequestUri(`/api/siteextensions/${extensionID}`);
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`installSiteExtension. Data: ${JSON.stringify(response)}`);
+            debug(`installSiteExtension. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 console.log(("SiteExtensionInstalled" + extensionID));
                 return response.body;
@@ -203,7 +204,7 @@ export class Kudu {
         httpRequest.uri = this._client.getRequestUri(`/api/siteextensions`, ['checkLatest=false']);
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getSiteExtensions. Data: ${JSON.stringify(response)}`);
+            debug(`getSiteExtensions. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body as Array<SiteExtension>;
             }
@@ -221,7 +222,7 @@ export class Kudu {
         httpRequest.uri = this._client.getRequestUri(`/api/extensionfeed`);
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getAllSiteExtensions. Data: ${JSON.stringify(response)}`);
+            debug(`getAllSiteExtensions. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body as Array<SiteExtension>;
             }
@@ -239,7 +240,7 @@ export class Kudu {
         httpRequest.uri = this._client.getRequestUri(`/api/processes/${processID}`);
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getProcess. status code: ${response.statusCode} - ${response.statusMessage}`);
+            debug(`getProcess. status code: ${response.statusCode} - ${response.statusMessage}`);
             if(response.statusCode == 200) {
                 return response.body;
             }
@@ -264,9 +265,9 @@ export class Kudu {
         };
         try {
             var response = await this._client.beginRequest(httpRequest, reqOptions);
-            console.debug(`killProcess. Data: ${JSON.stringify(response)}`);
+            debug(`killProcess. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 502) {
-                console.debug(`Killed Process ${processID}`);
+                debug(`Killed Process ${processID}`);
                 return;
             }
 
@@ -284,7 +285,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getAppSettings. Data: ${JSON.stringify(response)}`);
+            debug(`getAppSettings. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body;
             }
@@ -308,7 +309,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`listFiles. Data: ${JSON.stringify(response)}`);
+            debug(`listFiles. Data: ${JSON.stringify(response)}`);
             if([200, 201, 204].indexOf(response.statusCode) != -1) {
                 return response.body;
             }
@@ -336,7 +337,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getFileContent. Status code: ${response.statusCode} - ${response.statusMessage}`);
+            debug(`getFileContent. Status code: ${response.statusCode} - ${response.statusMessage}`);
             if([200, 201, 204].indexOf(response.statusCode) != -1) {
                 return response.body;
             }
@@ -369,7 +370,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`uploadFile. Data: ${JSON.stringify(response)}`);
+            debug(`uploadFile. Data: ${JSON.stringify(response)}`);
             if([200, 201, 204].indexOf(response.statusCode) != -1) {
                 return response.body;
             }
@@ -393,7 +394,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`createPath. Data: ${JSON.stringify(response)}`);
+            debug(`createPath. Data: ${JSON.stringify(response)}`);
             if([200, 201, 204].indexOf(response.statusCode) != -1) {
                 return response.body;
             }
@@ -419,10 +420,10 @@ export class Kudu {
         });
 
         try {
-            console.debug('Executing Script on Kudu. Command: ' + command);
+            debug('Executing Script on Kudu. Command: ' + command);
             let webRequestOptions: webClient.WebRequestOptions = {retriableErrorCodes: null, retriableStatusCodes: null, retryCount: 5, retryIntervalInSeconds: 5, retryRequestTimedout: false};
             var response = await this._client.beginRequest(httpRequest, webRequestOptions);
-            console.debug(`runCommand. Data: ${JSON.stringify(response)}`);
+            debug(`runCommand. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return ;
             }
@@ -449,7 +450,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`extractZIP. Data: ${JSON.stringify(response)}`);
+            debug(`extractZIP. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return ;
             }
@@ -470,19 +471,19 @@ export class Kudu {
 
         try {
             let response = await this._client.beginRequest(httpRequest, null, 'application/octet-stream');
-            console.debug(`ZIP Deploy response: ${JSON.stringify(response)}`);
+            debug(`ZIP Deploy response: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
-                console.debug('Deployment passed');
+                debug('Deployment passed');
                 return null;
             }
             else if(response.statusCode == 202) {
                 let pollableURL: string = response.headers.location;
                 if(!!pollableURL) {
-                    console.debug(`Polling for ZIP Deploy URL: ${pollableURL}`);
+                    debug(`Polling for ZIP Deploy URL: ${pollableURL}`);
                     return await this._getDeploymentDetailsFromPollURL(pollableURL);
                 }
                 else {
-                    console.debug('zip deploy returned 202 without pollable URL.');
+                    debug('zip deploy returned 202 without pollable URL.');
                     return null;
                 }
             }
@@ -491,7 +492,7 @@ export class Kudu {
             }
         }
         catch(error) {
-            throw new Error(('PackageDeploymentFailed' + this._getFormattedError(error)));
+            throw new Error(('Zip Deploy failed. Error: ' + this._getFormattedError(error)));
         }
     }
 
@@ -503,19 +504,19 @@ export class Kudu {
 
         try {
             let response = await this._client.beginRequest(httpRequest);
-            console.debug(`War Deploy response: ${JSON.stringify(response)}`);
+            debug(`War Deploy response: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
-                console.debug('Deployment passed');
+                debug('Deployment passed');
                 return null;
             }
             else if(response.statusCode == 202) {
                 let pollableURL: string = response.headers.location;
                 if(!!pollableURL) {
-                    console.debug(`Polling for War Deploy URL: ${pollableURL}`);
+                    debug(`Polling for War Deploy URL: ${pollableURL}`);
                     return await this._getDeploymentDetailsFromPollURL(pollableURL);
                 }
                 else {
-                    console.debug('war deploy returned 202 without pollable URL.');
+                    debug('war deploy returned 202 without pollable URL.');
                     return null;
                 }
             }
@@ -535,7 +536,7 @@ export class Kudu {
             httpRequest.method = 'GET';
             httpRequest.uri = this._client.getRequestUri(`/api/deployments/${deploymentID}`); ;
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getDeploymentDetails. Data: ${JSON.stringify(response)}`);
+            debug(`getDeploymentDetails. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body;
             }
@@ -553,7 +554,7 @@ export class Kudu {
             httpRequest.method = 'GET';
             httpRequest.uri = log_url;
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`getDeploymentLogs. Data: ${JSON.stringify(response)}`);
+            debug(`getDeploymentLogs. Data: ${JSON.stringify(response)}`);
             if(response.statusCode == 200) {
                 return response.body;
             }
@@ -577,7 +578,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`deleteFile. Data: ${JSON.stringify(response)}`);
+            debug(`deleteFile. Data: ${JSON.stringify(response)}`);
             if([200, 201, 204, 404].indexOf(response.statusCode) != -1) {
                 return ;
             }
@@ -602,7 +603,7 @@ export class Kudu {
 
         try {
             var response = await this._client.beginRequest(httpRequest);
-            console.debug(`deleteFolder. Data: ${JSON.stringify(response)}`);
+            debug(`deleteFolder. Data: ${JSON.stringify(response)}`);
             if([200, 201, 204, 404].indexOf(response.statusCode) != -1) {
                 return ;
             }
@@ -624,12 +625,12 @@ export class Kudu {
             let response = await this._client.beginRequest(httpRequest);
             if(response.statusCode == 200 || response.statusCode == 202) {
                 var result = response.body;
-                console.debug(`POLL URL RESULT: ${JSON.stringify(result)}`);
+                debug(`POLL URL RESULT: ${JSON.stringify(result)}`);
                 if(result.status == KUDU_DEPLOYMENT_CONSTANTS.SUCCESS || result.status == KUDU_DEPLOYMENT_CONSTANTS.FAILED) {
                     return result;
                 }
                 else {
-                    console.debug(`Deployment status: ${result.status} '${result.status_text}'. retry after 5 seconds`);
+                    debug(`Deployment status: ${result.status} '${result.status_text}'. retry after 5 seconds`);
                     await webClient.sleepFor(5);
                     continue;
                 }

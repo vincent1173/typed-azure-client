@@ -1,7 +1,7 @@
 {
-  "name": "typed-azure-kudu",
+  "name": "typed-azure-client",
   "version": "1.0.0",
-  "description": "Kudu Typescript implementation",
+  "description": "Azure Resource rest client - typescript implementation",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/vincentdass/typed-azure-client"

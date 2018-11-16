@@ -13,7 +13,7 @@ let mopts = {
 
 const validActions: string[] = ['zipdeploy'];
 
-function main() {
+async function main() {
     let argv = minimist(process.argv, mopts);
 
     if(!argv.scmUri || !argv.username || !argv.password || !argv.action) {
@@ -34,20 +34,20 @@ function main() {
                 throw Error("specify --package");
             }
 
-            kuduServiceObj.zipDeploy(packagePath, [process.env['DEPLOYER'] || 'TYPED_AZURE_REST_AGENT', 'isAsync=true']).then((result) => {
-                console.log(result);
-                if(result.status == 4) {
-                    console.log("Zip Deploy completed successfully");
-                }
-                else {
-                    throw Error("Zip Deploy failed.");
-                }
-            }).catch((error) => {
-                throw Error(error);
-            });
+            let deploymentResult = await kuduServiceObj.zipDeploy(packagePath, [process.env['DEPLOYER'] || 'TYPED_AZURE_REST_AGENT', 'isAsync=true']);
+            console.log(deploymentResult);
+            if(deploymentResult.status != 4) {
+                throw new Error("Zip Deploy failed! Refer to above result for more details");
+            }
+            else {
+                console.log("Zip Deploy completed successfully!");
+            }
             break;
         }
     }
 }
 
-main();
+main().catch(error => {
+    console.log(error);
+    process.exit(1);
+});

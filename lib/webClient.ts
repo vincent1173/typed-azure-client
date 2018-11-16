@@ -13,6 +13,12 @@ var requestOptions: httpInterfaces.IRequestOptions = proxyUrl ? {
     }
 } : {};
 
+export function debug(message) {
+    if(process.env['DEBUG_MODE'] == 'ON') {
+        console.log("[debug]" + message);
+    }
+}
+
 let ignoreSslErrors: string = process.env["ARM_REST_IGNORE_SSL_ERRORS"];
 requestOptions.ignoreSslError = ignoreSslErrors && ignoreSslErrors.toLowerCase() == "true";
 
@@ -56,7 +62,7 @@ export async function sendRequest(request: WebRequest, options?: WebRequestOptio
             
             let response: WebResponse = await sendRequestInternal(request);
             if (retriableStatusCodes.indexOf(response.statusCode) != -1 && ++i < retryCount) {
-                console.debug(util.format("Encountered a retriable status code: %s. Message: '%s'.", response.statusCode, response.statusMessage));
+                debug(util.format("Encountered a retriable status code: %s. Message: '%s'.", response.statusCode, response.statusMessage));
                 await sleepFor(timeToWait);
                 timeToWait = timeToWait * retryIntervalInSeconds + retryIntervalInSeconds;
                 continue;
@@ -66,7 +72,7 @@ export async function sendRequest(request: WebRequest, options?: WebRequestOptio
         }
         catch (error) {
             if (retriableErrorCodes.indexOf(error.code) != -1 && ++i < retryCount) {
-                console.debug(util.format("Encountered a retriable error:%s. Message: %s.", error.code, error.message));
+                debug(util.format("Encountered a retriable error:%s. Message: %s.", error.code, error.message));
                 await sleepFor(timeToWait);
                 timeToWait = timeToWait * retryIntervalInSeconds + retryIntervalInSeconds;
             }
@@ -84,7 +90,7 @@ export function sleepFor(sleepDurationInSeconds): Promise<any> {
 }
 
 async function sendRequestInternal(request: WebRequest): Promise<WebResponse> {
-    console.debug(util.format("[%s]%s", request.method, request.uri));
+    debug(util.format("[%s]%s", request.method, request.uri));
     var response: httpClient.HttpClientResponse = await httpCallbackClient.request(request.method, request.uri, request.body, request.headers);
     return await toWebResponse(response);
 }
@@ -101,8 +107,8 @@ async function toWebResponse(response: httpClient.HttpClientResponse): Promise<W
                 res.body = JSON.parse(body);
             }
             catch (error) {
-                console.debug("Could not parse response: " + JSON.stringify(error));
-                console.debug("Response: " + JSON.stringify(res.body));
+                debug("Could not parse response: " + JSON.stringify(error));
+                debug("Response: " + JSON.stringify(res.body));
                 res.body = body;
             }
         }
