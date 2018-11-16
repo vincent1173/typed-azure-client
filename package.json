@@ -1,0 +1,21 @@
+{
+  "name": "typed-azure-kudu",
+  "version": "1.0.0",
+  "description": "Kudu Typescript implementation",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/vincentdass/typed-azure-client"
+  },
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vincentdass/typed-azure-client/issues"
+  },
+  "homepage": "https://github.com/vincentdass/typed-azure-client#readme",
+  "dependencies": {
+    "q": "1.4.1",
+    "typed-rest-client": "0.12.0",
+    "@types/node": "6.0.68",
+    "@types/q": "1.0.7"
+  }
+}
