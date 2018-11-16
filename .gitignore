@@ -2,5 +2,8 @@
 # Ignore node modules
 node_modules/
 
-# Ignore JS files
+# Ignore JS files in lib
 lib/*.js
+
+# Ignore JS files in runner
+runner/*.js
