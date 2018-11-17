@@ -1,0 +1,6 @@
+
+# Ignore ts files in lib
+lib/*.ts
+
+# Ignore JS files in runner
+runner/*.ts
