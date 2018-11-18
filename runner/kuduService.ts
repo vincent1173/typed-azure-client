@@ -34,9 +34,9 @@ async function main() {
                 throw Error("specify --package");
             }
 
-            let deploymentResult = await kuduServiceObj.zipDeploy(packagePath, [process.env['DEPLOYER'] || 'TYPED_AZURE_REST_AGENT', 'isAsync=true']);
-            console.log(deploymentResult);
+            let deploymentResult = await kuduServiceObj.zipDeploy(packagePath, [ 'deployer=' + (process.env['DEPLOYER'] || 'TYPED_AZURE_REST_AGENT'), 'isAsync=true']);
             if(deploymentResult.status != 4) {
+                console.log(deploymentResult);
                 throw new Error("Zip Deploy failed! Refer to above result for more details");
             }
             else {
