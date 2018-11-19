@@ -27,7 +27,7 @@ export declare class KuduServiceManagementClient {
     private _scmUri;
     private _accesssToken;
     constructor(scmUri: string, accessToken: string);
-    beginRequest(request: webClient.WebRequest, reqOptions?: webClient.WebRequestOptions, contentType?: string): Promise<webClient.WebResponse>;
+    beginRequest(request: webClient.WebRequest, reqOptions?: webClient.WebRequestOptions): Promise<webClient.WebResponse>;
     getRequestUri(uriFormat: string, queryParameters?: Array<string>): string;
     getScmUri(): string;
 }
@@ -56,6 +56,6 @@ export declare class Kudu {
     getDeploymentLogs(log_url: string): Promise<any>;
     deleteFile(physicalPath: string, fileName: string): Promise<void>;
     deleteFolder(physicalPath: string): Promise<void>;
-    private _getDeploymentDetailsFromPollURL(pollURL);
+    private _getDeploymentDetailsFromPollURL(pollURL, affinityCookie?);
     private _getFormattedError(error);
 }
